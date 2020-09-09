@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\Tjorven\Desktop\P5 - Python\flask"
+VIRTUAL_ENV="C:\Users\Tjorven\Desktop\Programmieren\Python\P5_Webdesign\flask"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
