@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="ger">
     <head>
+        <title></title>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="C:/Users/Tjorven/Desktop/Programmieren/P5/P5_Webdesign/Webserver/templates/styles/basic.css" type="text/css">
     </head>
     
     <body>
@@ -9,7 +11,7 @@
 
         <a href="testLink">TestTest</a>
 
-        <div id="FormularTest">
+        <div id="FormularTest" class='container' >
             <form action='test.php' method="POST">
                 <label for="vorname">
                     <input id="vorname" type="text" maxlength="20">
@@ -19,18 +21,7 @@
                 Nachname</label>
                 <button type="submit" id="userErstellen">Registrieren</button>
             </form>
-            <!-- <script>
-                document.querySelector('#userErstellen').addEventListener('click', userErstllen);
 
-                function userErstellen(){
-                    var name = document.getElementById('vorname');
-                    var nname = document.getElementById('nachname');
-                    var fullName = name + ' ' + nname;
-
-                    document.getElementById('name').innerHTML = fullName;
-                }
-            </script>
-            -->
         </div>
     </body>
 </html>

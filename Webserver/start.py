@@ -8,7 +8,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/testLink')
-def testLink():
+def test_link():
     name = "Hassan"
     return render_template('testLink.html', **locals())
 
