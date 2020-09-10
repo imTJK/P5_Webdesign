@@ -3,25 +3,28 @@
     <head>
         <title></title>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="C:/Users/Tjorven/Desktop/Programmieren/P5/P5_Webdesign/Webserver/templates/styles/basic.css" type="text/css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/basic.css') }}" type="text/css">
+        <script src="{{ url_for('static', filename='js/basic.js') }}"></script>
     </head>
     
     <body>
-        <h1>Your mom <h1 id="name"></h1></h1>
+        <h1>Your mom <output id="MomName">Gay</output></h1>
 
-        <a href="testLink">TestTest</a>
+        <a href="testLink" id="Passion">WebDesign is my passion</a>
 
         <div id="FormularTest" class='container' >
-            <form action='test.php' method="POST">
-                <label for="vorname">
-                    <input id="vorname" type="text" maxlength="20">
-                Vorname</label>
-                <label for="nachname">
-                    <input id="nachname" type="text" maxlength="20">
-                Nachname</label>
-                <button type="submit" id="userErstellen">Registrieren</button>
+
+            <form id='form1'>
+                <label for="sexuality">
+                    <input id="sexuality" type="text" maxlength="20">
+                Sexuality</label>
             </form>
 
+            <p>
+                <button form='form1' type="button" id="userErstellen">Registrieren</button>
+            </p>
         </div>
+
+ 
     </body>
 </html>
