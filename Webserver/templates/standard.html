@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang='ger'>
+    <head>
+        <link href="{{ url_for('static', filename='css/placeholder.css') }}" rel='stylesheet'>
+        {% if title %}
+        <title>{{title}} - P5</title>
+        {% else %}
+        <title>Home - P5</title>
+        {% endif %}
+    </head>
+    <body>
+        <header>
+            <div class="navbar">
+                <ul>
+                    <li><a href="/index">Placeholder 1</a></li>
+                    <li><a href="">Placeholder 2</a></li>
+                    <li><a href="">Placeholder 3</a></li>
+                </ul>
+            </div>
+        </header>
+    </body>
+    {% block content %}{% endblock %}
+</html>
