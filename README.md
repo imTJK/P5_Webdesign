@@ -4,7 +4,9 @@ Website for borrowing Items from one another.
 Designed after the Ebay-Marketplace.
 
 Languages:
-HTML, PHP, JS, Python
+HTML, JS, Python
 
 Tools:
 MySQL
+Flask-WebServer-Framework
+
