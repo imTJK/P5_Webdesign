@@ -25,10 +25,6 @@ div{
     background-color: orange;
 }
 
-.navbar img{
-   width: 30px; height: 30px;
-}
-
 .navbar li{
     display: inline-block;
 }
