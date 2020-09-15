@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang='ger'>
     <head>
-        <link href="{{ url_for('static', filename='css/placeholder.css') }}" rel='stylesheet'>
+        <link href="{{css_link}}" rel='stylesheet'>
         {% if title %}
         <title>{{title}} - P5</title>
         {% else %}
@@ -11,27 +11,24 @@
 
     <body>
         <header>
-            <div class="navbar">
-                <ul>
-                    <li><a href="/index">Placeholder 1</a></li>
-                    <li><a href="">Placeholder 2</a></li>
-                    <li><a href="">Placeholder 3</a></li>
-                </ul>
+            <div class="container">
+                <div class="navbar">
+                    <ul>
+                        <li id="icon"><a href="/index"><img src="{{url_for('static', filename='res/imgs/icon.jpg')}}"  alt="Icon" width="50em" height="50em"></li></a>
+                        <li class="quicklink"><a href="">Anbieten</a></li>
+                        <li class="quicklink"><a href="">Ausleihen</a></li>
+                        <li></li> <!-- User-Profilbild oder leeres Profilbild was zur Userpage oder zum Login/Registrierung führt-->
+                    </ul>
+                </div>
             </div>
         </header>
-        {% block content %}{% endblock %}
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
 
         <div class="container">
             <div id="impressum">
-                <h1>
-                    Adrian Kettler exists
-                </h1>
-                <h2>
-                    Tj Koopmann helped
-                </h2>
-                <p>
-                    Maxim
-                </p>
+                <!--- Impressum kommt hier rein, sobald die Details ausgearbeitet sind-->
             </div>
         </div>
     </body>
