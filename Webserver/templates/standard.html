@@ -11,17 +11,30 @@
 
     <body>
         <header>
-            <div class="container">
-                <div class="navbar">
-                    <ul>
-                        <li id="icon"><a href="/index"><img src="{{url_for('static', filename='res/imgs/icon.jpg')}}"  alt="Icon" width="50em" height="50em"></li></a>
-                        <li class="quicklink"><a href="">Anbieten</a></li>
-                        <li class="quicklink"><a href="">Ausleihen</a></li>
-                        <li></li> <!-- User-Profilbild oder leeres Profilbild was zur Userpage oder zum Login/Registrierung führt-->
-                    </ul>
+            <div class="wrapper">
+                <div class="container" id="navigation">
+                    <div class="navbar">
+                        <ul>
+                            <li id="icon"><a href="/index"><img src="{{url_for('static', filename='res/imgs/icon.jpg')}}"  alt="Icon" width="50em" height="50em"></li></a>
+                            <li class="quicklink"><a href="">Anbieten</a></li>
+                            <li class="quicklink"><a href="">Ausleihen</a></li>
+                            <li></li> <!-- User-Profilbild oder leeres Profilbild was zur Userpage oder zum Login/Registrierung führt-->
+                        </ul>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="sidebar">
+                        <ul>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </header>
+
+
         <div class="container">
             {% block content %}{% endblock %}
         </div>

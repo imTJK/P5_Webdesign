@@ -4,7 +4,11 @@
 }
 
 .container {
-    border: solid black 1px;
+    border: solid cyan 1px;
+}
+
+.wrapper {
+    border: solid black 1px;    
 }
 
 .navbar {

@@ -1,6 +1,8 @@
 from flask import render_template, abort, url_for, request
-from Webserver import app
+from Webserver import app, login_manager, conn
+from Webserver.forms import LoginForm
 
+#Routing
 @app.route('/')
 @app.route('/index', methods=['GET'])
 def index():
@@ -10,7 +12,9 @@ def index():
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    abort(401)
+    form = LoginForm()
+    if form.validate_on_submit():
+        login_manager(user)
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
