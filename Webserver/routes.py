@@ -1,4 +1,4 @@
-from flask import render_template, abort, url_for, request, session
+from flask import render_template, abort, url_for, request, session, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
 from Webserver import app, login_manager
 from Webserver.forms import LoginForm, RegistrationForm
@@ -12,7 +12,7 @@ cur = None
 @app.before_first_request
 def before_first_request():
     global cur
-    cur = Cursor('mariadbtest', 'password', 'localhost', 3306)
+    cur = Cursor('mariadbtest', 'password', 'localhost', 3306, 'p5_database')
 
 @login_manager.user_loader
 def load_user(user):
@@ -33,19 +33,20 @@ def login():
         user = cur.get_user(request.form['username_email'], request.form['username_email'], request.form['password'])
         if  user != None:
             if request.form.getList('remember_me'):
-                #remembers session details (username, password, email, id) for 5 days
                 session.permanent = True
                 app.permanent_session_lifetime = timedelta(days=5)
+                #remembers session details (username, password, email, id) for 5 days
             session['logged_in'] = True
             session['user_id'] = user['id']
             session['username'] = user['username']
             session['email'] = user['email']
+            return redirect("/index.html", code=302)
         else:
-            return render_template(login_page, type='error')
-    elif ['username'] or ['email'] in session:
-        return render_template(login_page, type='logged_in')
+            return render_template(login_page, type='error', title="Sign In - Error Occured", form=LoginForm())
+    elif ('username' or 'email') in session:
+        return render_template(login_page, type='logged_in', title="Sign In - Logged In", form=LoginForm())
     else:
-        return render_template(login_page)
+        return render_template(login_page, title="Sign In", form=LoginForm())
         
             
 @app.route('/register', methods=['POST', 'GET'])
@@ -54,6 +55,23 @@ def register():
     if request.method == 'POST':
         pass
     abort(401)
+
+@app.route('/recover', methods=['POST', 'GET'])
+def recover_account():
+        #password recovery
+        #checks if e-mail is in database and sends a customized link to it
+        #approach:
+            #send hashed e-mail as link to recover/(hashed-mail-goes-here)
+            #let the user re-enter their e-mail in order to avoid people getting their link through wireshark or smth like it
+            #new cursor form for edit_password
+        pass
+
+@app.route('/recover/<recovery_id>', methods=['POST', 'GET'])
+def confirm_recovery(recovery_id):
+    #recovery_id = hashed e-mail of user
+    #let user re-enter their e-mail, use check_password_hash
+    #edit_password WTForm
+    pass
 
 @app.route('/entry/new-Entry', methods=['POST', 'GET'])
 def new_entry():

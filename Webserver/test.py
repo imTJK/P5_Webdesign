@@ -1,18 +1,15 @@
 from cursor import Cursor
-from werkzeug.security import generate_password_hash
+import re
+from werkzeug.security import generate_password_hash, check_password_hash
 
+cu = Cursor('root', '', 'localhost', 3306, "p5_database")
 
-print(generate_password_hash('HassansPwd'))
+cu.cur.execute('SELECT password FROM user WHERE username=?',('Hassan',))
+for x in cu.cur:
+    #cu.cur returns values as arrays, hence the x[0]
+    p_hash = x[0]
 
-cur = Cursor('pma', '', 'localhost', 3306, "p5_database")
-sel = cur.cur.execute('SELECT * FROM p5_database.users')
-print(sel)
-
-
-
-user = cur.get_user("Hassan", "Hassan@mail.com", "HassansPwd")
-
-
+user = cu.get_user("Hassan", "Hassan@mail.com", "HassansPwd")
 if user != None:
-    for x in user:
-        print(x)
+    for key in user:
+        print(str(key) + ": " + str(user[key]))
