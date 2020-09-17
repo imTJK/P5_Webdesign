@@ -26,10 +26,9 @@ class Cursor(object):
         user = {'id' : None,
                 'username' : None,
                 'email' : None}
-        if(self.cur.execute('SELECT 1 FROM p5_database.user WHERE(username=? OR email=?)', (username, email)) == 1):
-            #and check_password_hash(self.cur.execute('SELECT password FROM p5_database.user WHERE(username=? OR email=?)', (username, email)), password)):
+        if(self.cur.execute('SELECT 1 FROM p5_database.users WHERE(username="' + username + '" OR email="' + email + '")') == 1
+            and check_password_hash(self.cur.execute('SELECT password FROM p5_database.users WHERE(username="'+username+'" OR email="'+email+'")'), password)):
             self.cur.execute('SELECT id, username, email FROM p5_database.user WHERE(username=? OR email=? AND password=?)', (username, email, password))
-
             for(id, uname, mail) in self.cur:
                 user['id'] = id
                 user['username'] = uname
@@ -58,3 +57,7 @@ class Cursor(object):
     def get_entry(self):
         #SQL-Code by Adrian (WIP)
         pass
+
+    def close_connection(self):
+        if self.conn != None:
+            self.conn.close()
