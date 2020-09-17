@@ -52,7 +52,7 @@ def login():
 def register():
     form = RegistrationForm(request.form)
     if request.method == 'POST':
-
+        pass
     abort(401)
 
 @app.route('/entry/new-Entry', methods=['POST', 'GET'])
