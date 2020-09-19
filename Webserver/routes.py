@@ -1,9 +1,14 @@
+import sys, os
+sys.path.append(os.path.dirname(__file__))
+
 from flask import render_template, abort, url_for, request, session, redirect
+from flask_login import current_user, login_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from Webserver import app, login_manager
 from Webserver.forms import LoginForm, RegistrationForm
 from Webserver.cursor import Cursor
 from Webserver.mailserver import Email
+from Webserver.models import User, Entry
 from _datetime import timedelta
 
 
@@ -15,8 +20,9 @@ def before_first_request():
     cur = Cursor('mariadbtest', 'password', 'localhost', 3306, 'p5_database')
 
 @login_manager.user_loader
-def load_user(user):
-    return User.get(user)
+def load_user(id):
+    #int-cast due to flask_login passing ids as Strings
+    return User.get.query(int(id)) 
 
 #Routing
 @app.route('/')
@@ -24,29 +30,24 @@ def load_user(user):
 def index():
     user = {'username' : 'Hassan'}
     return render_template('index.html', user=user, css_link=url_for('static', filename='css/index.css')) 
-    #url_for erlaubt website-spezifisches css und anwendung von html-vererbung zusammen
+    #css_link css und anwendung von html-vererbung zusammen
+
+@app.route('/terms-of-service', methods=['GET'])
+def tos():
+    #Terms of Service / Allgemeine Geschäftsbedingungen
+    #nicht unbedingt notwendig
+    pass
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    login_page = "login.html"
-    if request.method == 'POST' and 'username_email' in request.form and 'password' in request.form:
-        user = cur.get_user(request.form['username_email'], request.form['username_email'], request.form['password'])
-        if  user != None:
-            if request.form.getList('remember_me'):
-                session.permanent = True
-                app.permanent_session_lifetime = timedelta(days=5)
-                #remembers session details (username, password, email, id) for 5 days
-            session['logged_in'] = True
-            session['user_id'] = user['id']
-            session['username'] = user['username']
-            session['email'] = user['email']
-            return redirect("/index.html", code=302)
-        else:
-            return render_template(login_page, type='error', title="Sign In - Error Occured", form=LoginForm())
-    elif ('username' or 'email') in session:
-        return render_template(login_page, type='logged_in', title="Sign In - Logged In", form=LoginForm())
-    else:
-        return render_template(login_page, title="Sign In", form=LoginForm())
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.email_username.data).first()
+        if user == None:
+            user = User.query.filter_by(email=form.email_username.data).first()
         
             
 @app.route('/register', methods=['POST', 'GET'])
@@ -74,9 +75,15 @@ def confirm_recovery(recovery_id):
     pass
 
 @app.route('/entry/new-Entry', methods=['POST', 'GET'])
+@login_required
 def new_entry():
     abort(401)
 
 @app.route('/entry/<int:entry_id>',  methods=['GET'])
 def show_entry(entry_id):
+    abort(401)
+
+@app.route('/user/<int:user_id>', methods=['POST', 'GET'])
+@login_required
+def account_page(user_id):
     abort(401)

@@ -1,4 +1,9 @@
-import sys
+
+### Probably completly useless due to switch to SQLAlchemy for easier security-Integration ###
+
+import sys, os
+sys.path.append(os.path.dirname(__file__))
+
 import mariadb
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -35,10 +40,10 @@ class Cursor(object):
         elif email == None:
             email = ""
         
-        self.cur.execute('SELECT 1, password FROM p5_database.user WHERE username=? OR email=?', (username, email,))
+        self.cur.execute('SELECT 1, password FROM p5_database.users WHERE username=? OR email=?', (username, email,))
         for x in self.cur:
             if (x[0] == 1 and check_password_hash(x[1], password)):
-                self.cur.execute('SELECT id, username, email FROM p5_database.user WHERE(username=? OR email=? AND password=?)', (username, email, password))
+                self.cur.execute('SELECT id, username, email FROM p5_database.users WHERE(username=? OR email=? AND password=?)', (username, email, password))
                 for(id, uname, mail) in self.cur:
                     user['id'] = id
                     user['username'] = uname
@@ -61,7 +66,7 @@ class Cursor(object):
                 self.cur.execute('SELECT EXISTS(SELECT 1 FROM p5_database WHERE email=?', (email))
                 for mail in self.cur:
                     if(mail[0] == 0):
-                        self.cur.execute('INSERT INTO p5_database.user(username, password, email) VALUES(?, ?, ?)', (username, email, generate_password_hash(password)))
+                        self.cur.execute('INSERT INTO p5_database.users(username, password, email) VALUES(?, ?, ?)', (username, email, generate_password_hash(password)))
                         return 0
                     else:
                         return 1
@@ -75,6 +80,24 @@ class Cursor(object):
     def get_entry(self):
         #SQL-Code by Adrian (WIP)
         pass
+
+    def get_user_entries(self, user_id):
+        #only called when logged in, therefore no authentication or checking if the user exists
+        entries =  []
+        entry = {
+            'id' : None,
+            'created_time' : None,
+            'is_private' : None
+        }
+        
+        self.cur.execute('SELECT id, created_time, is_private FROM p5_database.entries WHERE created_by=?', (user_id))
+        for e in self.cur:
+            entry['id'] = e[0]
+            entry['created_time'] = e[1]
+            entry['is_private'] = e[2]
+            entries.append(e)
+
+        return entries
 
     def close_connection(self):
         if self.conn != None:

@@ -1,11 +1,19 @@
+import sys, os
+sys.path.append(os.path.dirname(__file__))
+
 from flask import Flask, render_template
 from flask_login import LoginManager, current_user
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 from Webserver.config import Config
-import sys
+
 
 app = Flask(__name__)
 app.config.from_object(Config)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-from Webserver import routes
+from Webserver import routes, models

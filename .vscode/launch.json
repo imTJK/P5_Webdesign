@@ -17,7 +17,6 @@
             "request": "launch",
             "module": "flask",
             "env": {
-                "FLASK_APP": "start.py",
                 "FLASK_ENV": "flask",
                 "FLASK_DEBUG": "0",
                 "SENDGRID_API_KEY": "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"
