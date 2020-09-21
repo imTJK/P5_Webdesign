@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="de">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>P5 - Registrieren</title>
-    </head>
-    <body>
-        <p>this is the register page</p>
-    </body>
-</html>
+{% extends 'standard.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block content %}
+    <h1>Register</h1>
+    <div class="container">
+        {{ wtf.quick_form(form)}}
+    </div>
+{% endblock %}

@@ -6,3 +6,4 @@ class Config(object):
     MAIL_SERVER = 'tjorvenkoopmann2001@gmail.com'
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost/p5_database'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    ALLOWED_EXTENSIONS = ['jpg', 'png', 'jpeg', 'nef', 'cr2']
