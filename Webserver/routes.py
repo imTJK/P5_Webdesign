@@ -15,6 +15,7 @@ from flask.helpers import flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.urls import url_parse
 from _datetime import timedelta
+from werkzeug.utils import secure_filename
 
 
 def flash_errors(form):
@@ -41,6 +42,10 @@ def unauthorized_user():
     return redirect(url_for('login'))
 
 ###   Routing   ###
+@app.route('/')
+def re_direct():
+    return redirect(url_for('homepage'))
+
 @app.route('/homepage', methods=['GET'])
 def homepage():
     return render_template('homepage.html', css_link=url_for('static', filename='css/homepage.css')) 

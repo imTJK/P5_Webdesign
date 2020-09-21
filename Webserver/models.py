@@ -12,7 +12,7 @@ class Entry(db.Model):
     __tablename__ = 'entries'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
-    description = db.Column(db.LargeBinary(length=(2**32)-1))
+    description = db.Column(db.String(240))
     created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, index=True, server_default=str(datetime.utcnow))
 
@@ -31,7 +31,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(30), index=True, unique=True)
     email = db.Column(db.String(255), index=True, unique=True)
     password_hash = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime, index=True, server_default=str(datetime.utcnow))
+    created_at = db.Column(db.DateTime, server_default=str(datetime.utcnow))
     user_entries = db.relationship('Entry', backref='author', lazy='dynamic', foreign_keys=[Entry.id], primaryjoin='Entry.id == User.id')
 
     def set_password(self, password):
