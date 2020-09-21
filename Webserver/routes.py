@@ -3,13 +3,14 @@ sys.path.append(os.path.dirname(__file__))
 
 ### local imports
 from Webserver import app, login_manager, db
-from Webserver.forms import LoginForm, RegistrationForm, RecoveryForm
+from Webserver.forms import LoginForm, PasswordForm, RecoveryForm, RegistrationForm
 from Webserver.cursor import Cursor
 from Webserver.mailserver import Email
 from Webserver.models import User, Entry
 
 ### package imports
 from flask import render_template, abort, url_for, request, session, redirect
+from flask_wtf import FlaskForm
 from flask_login import current_user, login_required, login_user, logout_user
 from flask.helpers import flash
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -42,7 +43,7 @@ def unauthorized_user():
     return redirect(url_for('login'))
 
 ###   Routing   ###
-@app.route('/')
+@app.route('/', methods=['GET'])
 def re_direct():
     return redirect(url_for('homepage'))
 
@@ -59,6 +60,7 @@ def tos():
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
+    css_link = url_for('static', filename='css/homepage.css')
     if current_user.is_authenticated:
         return redirect(url_for('homepage'))
 
@@ -81,9 +83,9 @@ def register():
             return redirect(url_for('homepage'))
     elif not form.validate_on_submit():
         flash_errors(form)
-        return render_template('register.html', title='Registrieren', form=form, css_link=url_for('static', filename='css/homepage.css'))
+        return render_template('register.html', title='Registrieren', form=form, css_link=css_link)
     
-    return render_template('register.html', title='Registrieren', form=form, css_link=url_for('static', filename='css/homepage.css'))
+    return render_template('register.html', title='Registrieren', form=form, css_link=css_link)
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -124,21 +126,55 @@ def logout():
 
 
 @app.route('/recover', methods=['POST', 'GET'])
-def recover_account():
-        #password recovery
-        #checks if e-mail is in database and sends a customized link to it
-        #approach:
-            #send hashed e-mail as link to recover/(hashed-mail-goes-here)
-            #let the user re-enter their e-mail in order to avoid people getting their link through wireshark or smth like it
-            #new cursor form for edit_password
-        pass
+def recover():
+        form = RecoveryForm()
+        flash_errors(form)
+        if request.method == 'POST' and form.validate_on_submit():
+            user = User.query.filter_by(email=form.email_username).first()
+            if not user:
+                user = User.query.filter_by(username=form.email_username).first()
+                if not user:
+                    form.errors.append('Kein User konnte unter diesen Namen/Email gefunden werden')
+                    return redirect(url_for('recover'))
+            sec_code = generate_password_hash(user.email)
+            mail = Email(
+                email_sender="p5_email@gmail.com",
+                email_recipients=user.email,
+                subject="Password Recovery - P5",
+                html_message="<strong href='link_to_recovery_page/" + sec_code + ">Click here to reset your password</strong>"
+            )
+            mail.send_mail() #not working yet, sends mail to users email adress
+            return redirect(url_for('homepage'), message='Wiederherstellungs-Email versandt an: ' + user.email + '.\n Schaue bitte auch in deinem Spam-Ordner nach')
+        else:
+            return render_template('recover', title='Passwort wiederherstellen')
+
 
 @app.route('/recover/<recovery_id>', methods=['POST', 'GET'])
 def confirm_recovery(recovery_id):
-    #recovery_id = hashed e-mail of user
-    #let user re-enter their e-mail, use check_password_hash
-    #edit_password WTForm
-    pass
+    email_form = RecoveryForm()
+    flash_errors(email_form)
+
+    if request.method == 'POST' and email_form.validate_on_submit() and check_password_hash(email_form.email, recovery_id):
+        session['user'] = User.query.select_by(email = email_form.email).first()
+        return redirect(url_for('set_password'))
+
+    return render_template('confirm_recover')
+
+@app.route('/recover/set_password')
+def set_password():
+    if 'user' not in session:
+        redirect(url_for('login'))
+    
+    form = PasswordForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        user = session['user']
+        user.set_password(form.password)
+        session['user'] = None
+        return redirect(url_for('login'))
+    else:
+        form.password.errors.append('')
+        flash_errors(form)
+        return redirect(url_for('set_password'))
 
 @app.route('/entry/new-Entry', methods=['POST', 'GET'])
 @login_required
@@ -156,6 +192,7 @@ def account_page(user_id):
 
 @app.route('/', methods=['POST'])
 def upload_image():
+
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('No file part')
@@ -169,4 +206,4 @@ def upload_image():
             filename = secure_filename(file.filename)
             with open(filename, 'rb') as file:
                 blob = file.read()
-            
+                

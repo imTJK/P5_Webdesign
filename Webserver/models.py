@@ -8,6 +8,11 @@ import zlib
 
 from Webserver import db
 
+def NullColumn(*args,**kwargs):
+    kwargs["nullable"] = kwargs.get("nullable",True)
+    return db.Column(*args,**kwargs)
+
+
 class Entry(db.Model):
     __tablename__ = 'entries'
     id = db.Column(db.Integer, primary_key=True)
@@ -24,6 +29,15 @@ class Entry(db.Model):
     
     def set_description(self, description):
         self.description = zlib.compress(description)
+
+
+class Images(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    img_1 = NullColumn(db.LargeBinary(length=2**24))
+    img_2 = NullColumn(db.LargeBinary(length=2**24))
+    img_3 = NullColumn(db.LargeBinary(length=2**24))
+    img_4 = NullColumn(db.LargeBinary(length=2**24))
+
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'

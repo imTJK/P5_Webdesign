@@ -10,7 +10,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
-app.config.from_object(Config)
+app.config.from_object(Config(
+    user = 'root',
+    password = None,
+    domain = 'localhost',
+    database = 'p5_database'
+))
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
