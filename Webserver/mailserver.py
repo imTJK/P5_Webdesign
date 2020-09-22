@@ -1,27 +1,17 @@
 import sys, os
 sys.path.append(os.path.dirname(__file__))
 
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+import smtplib, ssl
 
-#HTTP Error 403: Forbidden
-#Wird später gefixt
 class Email(object):
-    def __init__(self, email_sender, email_recipients, subject, html_message):
-        self.message = Mail(
-            from_email=email_sender,
-            to_emails=email_recipients,
-            subject=subject,
-            html_content=html_message)
+    def __init__(self, port, password, email):
+        self.email, self.password = email, password
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+            self.server = server
 
-       
-    def send_mail(self):
-        try:
-            sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-            sg.send(self.message)
-        except Exception as e:
-            print(e)
 
-if __name__ == "__main__":
-    mail = Email("from_email@example.com", "to@example.com", "First E-Mail-Test with Twilio SendGrid", '<strong> Now this is podracing </strong>')
-    mail.send_mail()
+    def send_mail(self, recipient, body):
+        self.server.connect('smtp.gmail.com')
+        self.server.login(self.email, self.password)
+        self.server.sendmail(self.email, recipient, body)
