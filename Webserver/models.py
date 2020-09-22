@@ -18,6 +18,7 @@ class Entry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     description = db.Column(db.String(240))
+    imgs_id = db.Column(db.Integer, db.ForeignKey('imgs.id'))
     created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, index=True, server_default=str(datetime.utcnow))
 
@@ -32,6 +33,7 @@ class Entry(db.Model):
 
 
 class Images(db.Model):
+    __tablename__ = 'imgs'
     id = db.Column(db.Integer, primary_key=True)
     img_1 = NullColumn(db.LargeBinary(length=2**24))
     img_2 = NullColumn(db.LargeBinary(length=2**24))

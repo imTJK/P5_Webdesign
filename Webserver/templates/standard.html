@@ -11,7 +11,12 @@
 <html lang='ger'>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        
+        {% if css_link %}
         <link href="{{css_link}}" rel='stylesheet'>
+        {% else %}
+        <link href="{{url_for('static', filename='css/homepage.css')}}" rel='stylesheet'>
+        {% endif %}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -27,9 +32,9 @@
             <div class="wrapper">
                 <div class="container-fluid" id="navbar">
                     <ul class="nav justify-content-center">
-                        <li class="nav-item"><a class="nav-link" href="/homepage"><img src="{{url_for('static', filename='res/imgs/icon.png')}}"  alt="Icon" width="50em" height="50em"></a>
-                        <li class="nav-item"><a class="nav-link" href="">Anbieten</a>
-                        <li class="nav-item"><a class="nav-link" href="">Ausleihen</a>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('homepage') }}"><img src="{{url_for('static', filename='res/imgs/icon.png')}}"  alt="Icon" width="50em" height="50em"></a>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('search_entry', search_term='') }}">Anbieten</a>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('new_entry') }}">Ausleihen</a>
                         <li class="nav-item">
                             {% if current_user.is_anonymous %}
                             <a class="nav-link" href="{{ url_for('login') }}">Login</a>

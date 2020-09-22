@@ -2,7 +2,7 @@ import sys, os
 sys.path.append(os.path.dirname(__file__))
 
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField
+from flask_wtf.file import FileField, FileRequired
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, EqualTo, InputRequired, Length, Email
 from werkzeug.security import generate_password_hash
@@ -16,7 +16,7 @@ class LoginForm(FlaskForm):
 
 #Password recovery
 class RecoveryForm(FlaskForm):
-    email = StringField('Email', validator=[InputRequired(), Email(check_deliverability=True)])
+    email = StringField('Email', validators=[InputRequired(), Email(check_deliverability=True)])
     submit = SubmitField('Registrieren')
 
 class PasswordForm(FlaskForm):
@@ -35,12 +35,15 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Registrieren')
 
 #creating a new entry
-class EntryForm(FlaskForm):
-    title = StringField('Titel', validator=[InputRequired(), Length(max=100)])
-    description = StringField('Bitte beschreiben sie das Produkt', validator=[InputRequired(), Length(min=30, max=1500)])
-    img_1 = FileField()
-    img_2 = FileField()
-    img_3 = FileField()
-    img_4 = FileField()
-    submit = SubmitField('Artikel einstellen')
+class EntryBody(FlaskForm):
+    title = StringField('Titel', validators=[InputRequired(), Length(max=100)])
+    description = StringField('Bitte beschreiben sie das Produkt', validators=[InputRequired(), Length(min=30, max=1500)])
+    
+class EntryImagesForm(FlaskForm):
+    img_1 = FileField('Haupt-Bild',validators=[FileRequired()])
+    img_2 = FileField('Bild 2')
+    img_3 = FileField('Bild 3')
+    img_4 = FileField('Bild 4')
 
+class EntryForm(EntryBody, EntryImagesForm):
+    submit = SubmitField('Artikel einstellen')
