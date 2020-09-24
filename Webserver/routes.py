@@ -3,13 +3,13 @@ sys.path.append(os.path.dirname(__file__))
 
 ### local imports
 from Webserver import app, login_manager, db
-from Webserver.forms import EntryForm, EntryImagesForm, LoginForm, PasswordForm, RecoveryForm, RegistrationForm
+from Webserver.forms import EntryForm, EntryImagesForm, LoginForm, PasswordForm, RecoveryForm, RegistrationForm, SearchForm
 from Webserver.mailserver import Email
 from Webserver.models import Entry, Images, User
 from Webserver.templates.email_body import EmailBody
 
 ### package imports
-from flask import render_template, abort, url_for, request, session, redirect
+from flask import render_template, abort, url_for, request, session, redirect, current_app
 from flask_wtf import FlaskForm
 from flask_login import current_user, login_required, login_user, logout_user
 from flask.helpers import flash
@@ -18,6 +18,9 @@ from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 from _datetime import timedelta
 from email.mime.text import MIMEText
+from PIL import Image
+import io
+import zlib
 
 
 def flash_errors(form):
@@ -30,7 +33,15 @@ def flash_errors(form):
                 ))
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1] in app.ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1] in current_app.config['ALLOWED_EXTENSIONS']
+
+#search_form = SearchForm()
+
+mail = Email(
+    port = 465,
+    password = '+F%8TVppQ@R-.37tcs`t4N', # needs to definetly be read from file later on
+    email = 'p5.leihwas@gmail.com'
+)
 
 ### Flask Code-Start ###
 
@@ -49,12 +60,38 @@ def unauthorized_user():
     return redirect(url_for('login'))
 
 ###   Routing   ###
+@app.route('/test/<length>', methods=['GET', 'POST'])
+def test(length):
+    css_template = session['standard_css']
+    entries_list = Entry.query.limit(length).all()
+
+    entries = {0 : {
+                'id' : None,
+                'title' : None,
+                'description' : None,
+                'imgs' : [None]}}
+    imgs = []
+
+    for i in range(len(entries_list)):
+        for image in Images.query.filter_by(id = entries_list[i].imgs_id):
+            for img in image.get_images():
+                imgs.append(zlib.compress(img))
+        
+
+        entries[i] =  {
+                    'id' : entries_list[i].id,
+                    'title' : entries_list[i].title,
+                    'description' : str(entries_list[i].description, 'utf-8'),
+                    'imgs' : imgs
+                    }
+        imgs = []
+
+    #nested dict for getting entries and images in one place, best for showing in large list and easy to 
+
+    return render_template('test.html', css_link=css_template, entries=entries)
+
+
 @app.route('/', methods=['GET'])
-def re_direct():
-    return redirect(url_for('homepage'))
-
-
-
 @app.route('/homepage', methods=['GET'])
 def homepage():
     css_template = session['standard_css']
@@ -159,12 +196,7 @@ def recover():
                 flash('Kein User konnte unter diesen Namen/Email gefunden werden')
                 return redirect(url_for('recover'))
 
-        mail = Email(
-            port = 465,
-            password = '+F%8TVppQ@R-.37tcs`t4N', # needs to definetly be read from file later on
-            email = 'p5.leihwas@gmail.com'
-        )
-        email_body = EmailBody(type = 'password_reset', recipient=user.username, link="http://127.0.0.1:5000" + url_for('confirm_recovery', recovery_id=generate_password_hash(user.email))).text
+        email_body = EmailBody(recipient=user.username, link="http://127.0.0.1:5000" + url_for('confirm_recovery', recovery_id=generate_password_hash(user.email))).password_reset()
         mail.send_mail(
             subject='Passwort-Wiederherstellung',
             recipient=user.email,
@@ -206,10 +238,16 @@ def set_password(recovery_id):
     if request.method == 'POST' and form.validate_on_submit():
         user = User.query.filter_by(email = session['user_recovery_email']).first()
         user.set_password(form.password.data)
+        mail.send_mail(
+            subject = 'Passwort wurde geändert',
+            recipient = session['user_recovery_email'],
+            body = EmailBody(User.query.filter_by(email=session['user_recovery_email']).username).confirm_reset()
+        )
         session['user_recovery_email'] = None
+        
         return redirect(url_for('login'))
     else:
-        return render_template('set_password.html', form = form)
+        return render_template('set_password.html', form = form, css_link=css_template)
 
 
 
@@ -218,34 +256,62 @@ def set_password(recovery_id):
 def new_entry():
     form = EntryForm()
     if request.method == 'POST' and form.validate_on_submit():
-        imgs = [img for img in form if 'img' in img.data)]
-        for i in imgs:
-            print(i)
-        imgs = Images(
-            img_1 = open(imgs[0].data, 'rb').read(),
-            img_2 = open(imgs[1].data, 'rb').read(),
-            img_3 = open(imgs[2].data, 'rb').read(),
-            img_4 = open(imgs[3].data, 'rb').read(),
-        )
-        db.session.add(imgs)
-        db.session.commit()
+        imgs = [form.img_1.data, form.img_2.data, form.img_3.data, form.img_4.data]
         
-        entry = Entry(
-            title = form.title,
-            description = form.description,
-            created_by_id = current_user.id
+
+        for i in range(len(imgs)):
+            print(imgs[i])
+            if imgs[i] is not None:
+                if len(imgs[i].read()) < 16000000:
+                    if allowed_file(imgs[i].filename):
+                        imgs[i] = imgs[i].read()
+                    else:
+                        flash('Unerlaubtes Dateiformat .'+ imgs[i].filename.split('.')[len(imgs[i].filename.split('.')) - 1])
+                        return redirect(url_for('new_entry'))
+                else:
+                    flash('Die Datei: ' + imgs[i].filename + ' ist zu groß. Max = 16MB')
+                    return redirect(url_for('new_entry'))
+            else:   
+                imgs[i] = 0
+
+        imgs_id = db.session.query(Images).count() + 1
+
+        imgs = Images(
+            id = imgs_id,
+            img_1=imgs[0],
+            img_2=imgs[1],
+            img_3=imgs[2],
+            img_4=imgs[3]
         )
+
+        entry = Entry(
+            title = form.title.data,
+            description = form.description.data,
+            created_by_id = current_user.id,
+            imgs_id = imgs_id
+        )
+
+        db.session.add(imgs)
         db.session.add(entry)
         db.session.commit()
-        redirect(url_for('homepage'))
+        return redirect(url_for('homepage'))
     return render_template('new_entry.html', form=form)
 
-@app.route('/entry/search/<search_term>')
-def search_entry(search_term, methods=['GET']):
-    abort(401)
 
 
-@app.route('/entry/<int:entry_id>',  methods=['GET'])
+@app.route('/entry/search/<search_term>', methods=['POST', 'GET'])
+def search_entry(search_term):
+
+    if request.method == 'POST':
+        pass #search function
+    
+    
+    
+    entries = Entry.query.filter(Entry.title.contains(search_term))
+    render_template('search_entry.html', entries = entries)
+
+
+@app.route('/entry/<int:entry_id>',  methods=['POST', 'GET'])
 def show_entry(entry_id):
     abort(401)
 
@@ -255,3 +321,9 @@ def show_entry(entry_id):
 def account_page(user_id):
     if 'user' in session and session['user'].id == user_id:
         return render_template('account.html')
+
+@app.route('/image/<image_id>', methods=['GET'])
+def show_image(image_id):
+    id_dc = zlib.decompress(image_id)
+    img = Image.open(io.BytesIO(id_dc))
+    return img

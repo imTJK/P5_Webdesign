@@ -25,6 +25,9 @@
         {% else %}
         <title>Home - P5</title>
         {% endif %}
+
+        {% block jscript %}
+        {% endblock %}
     </head>
 
     <body>
@@ -33,8 +36,8 @@
                 <div class="container-fluid" id="navbar">
                     <ul class="nav justify-content-center">
                         <li class="nav-item"><a class="nav-link" href="{{ url_for('homepage') }}"><img src="{{url_for('static', filename='res/imgs/icon.png')}}"  alt="Icon" width="50em" height="50em"></a>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('search_entry', search_term='') }}">Anbieten</a>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('new_entry') }}">Ausleihen</a>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('search_entry', search_term='') }}">Ausleihen</a>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('new_entry') }}">Anbieten</a>
                         <li class="nav-item">
                             {% if current_user.is_anonymous %}
                             <a class="nav-link" href="{{ url_for('login') }}">Login</a>

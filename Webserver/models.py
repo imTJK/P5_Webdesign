@@ -29,7 +29,7 @@ class Entry(db.Model):
         self.title = title
     
     def set_description(self, description):
-        self.description = zlib.compress(description)
+        self.description = description
 
 
 class Images(db.Model):
@@ -39,6 +39,9 @@ class Images(db.Model):
     img_2 = NullColumn(db.LargeBinary(length=2**24))
     img_3 = NullColumn(db.LargeBinary(length=2**24))
     img_4 = NullColumn(db.LargeBinary(length=2**24))
+
+    def get_images(self):
+        return [self.img_1, self.img_2, self.img_3, self.img_4]
 
 
 class User(UserMixin, db.Model):

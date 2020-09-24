@@ -1,7 +1,10 @@
 class EmailBody(object):
-    def __init__(self, type, recipient, link):
-        if type == 'password_reset':
-            self.text = '''
+    def __init__(self, recipient, link):
+        self.recipient = recipient
+        self.link = link
+
+    def password_reset(self):
+        text = '''
                 <body>
                     <p>Hallo {},<br>
                     <br>
@@ -14,10 +17,11 @@ class EmailBody(object):
                     dein Leihwas Team :)
                     </p>
                 </body>
-            '''.format(recipient, link)
-
-        elif type == 'password_reset_confirmation':
-            self.text ='''
+            '''.format(self.recipient, self.link)
+        return text
+    
+    def confirm_reset(self):
+        text ='''
                 <body>
                     <p> Hallo {},<br>
                     <br>
@@ -28,10 +32,11 @@ class EmailBody(object):
                     dein Leihwas Team :)
                     </p>
                 </body>
-            '''.format(recipient, link)
-
-        elif type == 'activation':
-            self.text = '''
+            '''.format(self.recipient, self.link)
+        return text
+    
+    def activation(self):
+        text = '''
                 <body>
                     <p>Hallo {},<br>
 
@@ -41,6 +46,5 @@ class EmailBody(object):
                     dein Leihwas Team :)
                     </p>
                 </body>
-            '''.format(recipient, link)
-        else:
-            print("Incorrect Type for Email-Class")
+            '''.format(self.recipient, self.link)
+        return text

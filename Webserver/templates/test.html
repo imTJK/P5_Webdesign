@@ -1,0 +1,31 @@
+{% extends 'standard.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block jscript %}
+<script>
+    var _img = document.getElementById('entry_image_big');
+    alert(URL.createObjectURL($('#img-data').data()))
+
+    _img.source = URL.createObjectURL($('#img-data').data())
+    
+</script>
+{% endblock %}
+
+{% block content %}
+    <strong><h1>Test-Site</h1></strong>
+    {% for entry in entries %}
+    <meta id='img-data' data="{{entries[entry].imgs[0]}}">
+    
+    <div class="wrapper">
+        <a href="{{url_for('show_entry', entry_id = entries[entry].id)}}">
+        <div class="container">
+            <div class="entry">
+                <img id="entry_image_big" src="", alt="Angebots-Bild">
+                <h1>{{entries[entry].title}}</h1>
+                <p>{{entries[entry].description}}</p>
+            </div>
+        </div>
+        </a>
+    </div>
+    {% endfor %}
+{% endblock %}
