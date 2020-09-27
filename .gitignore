@@ -1,4 +1,7 @@
 /flask_venv/*
+/Webserver/static/res/_tmp/*
 /migrations/*
+!/migrations/versions/
+/migrations/versions/__pycache__
 /Webserver/__pycache__
 /__pycache__/

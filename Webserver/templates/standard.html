@@ -1,3 +1,5 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
 <!DOCTYPE html>
 {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -35,9 +37,9 @@
             <div class="wrapper">
                 <div class="container-fluid" id="navbar">
                     <ul class="nav justify-content-center">
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('homepage') }}"><img src="{{url_for('static', filename='res/imgs/icon.png')}}"  alt="Icon" width="50em" height="50em"></a>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('search_entry', search_term='') }}">Ausleihen</a>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('new_entry') }}">Anbieten</a>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('homepage') }}"><img src="{{url_for('static', filename='res/imgs/icon.png')}}"  alt="Icon" width="50em" height="50em"></a></li>
+                        <li class="nav-item">{{ wtf.quick_form(search_form) }}</li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('new_entry') }}">Anbieten</a></li>
                         <li class="nav-item">
                             {% if current_user.is_anonymous %}
                             <a class="nav-link" href="{{ url_for('login') }}">Login</a>

@@ -12,6 +12,7 @@
 }
 
 .container {
+    background-image: linear-gradient(to top right, #845EC2, #D65DB1, #FF6F91, #FF9671, #FFC75F, #F9F871);
     width: 100%;
     border: solid black 1px;
     display: block;
@@ -20,7 +21,7 @@
 .flashes{
     width: 100%;
     font-size: 50px;
-    background-color: red;
+    background-color:#FFC75F;
     text-align: center;
 
 
@@ -28,7 +29,8 @@
     -moz-transition: opacity 10s ease-in-out;
     -ms-transition: opacity 10s ease-in-out;
     -o-transition: opacity 10s ease-in-out;
-     opacity: 1;
+    transition: opacity 10s ease-in-out;
+    opacity: 1;
 }
 
 .flashes li {
@@ -37,11 +39,10 @@
 }
 
 #navbar {
-    width: 100%;
     position: fixed;
     width: 100%;
     overflow: hidden;
-    background-color: #333;
+    background-color: #69798C;
 }
 
 ul.nav{

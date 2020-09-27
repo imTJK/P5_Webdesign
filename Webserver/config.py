@@ -8,4 +8,5 @@ class Config(object):
         self.SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{user}:{password}@{domain}/{database}'
         self.SQLALCHEMY_TRACK_MODIFICATIONS = False
         self.ALLOWED_EXTENSIONS = ['jpg', 'png', 'jpeg', 'nef', 'cr2']
+        self.UPLOAD_FOLDER = r'C:\Users\Tjorven\Desktop\Programmieren\P5\P5_Webdesign\Webserver\static\res\_tmp'
     
