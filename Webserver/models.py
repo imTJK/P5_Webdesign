@@ -69,7 +69,8 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, server_default=str(datetime.utcnow))
     is_active = db.Column(db.Boolean, default=False, nullable=False)
     user_entries = db.relationship('Entry', backref='author', lazy='dynamic', foreign_keys=[Entry.id], primaryjoin='Entry.id == User.id')
-    
+    security_question = db.Column(db.Integer, nullable = False)
+    hashed_security_answer = db.Column(db.String(255), nullable = False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

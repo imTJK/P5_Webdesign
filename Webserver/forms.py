@@ -6,6 +6,7 @@ from flask_wtf.file import FileField, FileRequired
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, EqualTo, InputRequired, Length, Email
 from werkzeug.security import generate_password_hash
+from wtforms.fields.core import SelectField
 
 #login
 class LoginForm(FlaskForm):
@@ -27,12 +28,16 @@ class PasswordForm(FlaskForm):
 
 #registration
 class RegistrationForm(FlaskForm):
+    SECURITY_QUESTIONS =  [('Wie hieß dein erstes Haustier?', 0),('Straße, in der Sie als Kind gewohnt haben?', 1), ('Bester Freund in Ihrer Kindheit?', 2), ('Vorname Ihres Großvaters?', 3)]
+    
     email = StringField('Email', validators=[InputRequired(), Email(check_deliverability=True)])
     username = StringField('Benutzername', validators=[InputRequired(), Length(min=5, max=255)])
     password = PasswordField('Passwort', validators=[InputRequired(),
                                         EqualTo('confirm', message="Passwörten müssen übereinstimmen")])
     confirm = PasswordField('Passwort wiederholen')
     accept_tos = BooleanField('Hiermit bestätige ich die AGBs gelesen und akzeptiert zu haben', validators=[InputRequired()])
+    security_question = SelectField(u'Bitte wählen sie eine Sicherheitsfrage aus', choices = list(zip(*SECURITY_QUESTIONS))[0], validators = [InputRequired()])
+    security_answer = StringField('Antwort', validators=[InputRequired()])
     submit = SubmitField('Registrieren')
 
 #Entry-Form 2-Parter consisting of Body and Images seperately

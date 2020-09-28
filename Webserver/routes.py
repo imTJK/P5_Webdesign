@@ -177,7 +177,7 @@ def register():
     flash_errors(form)
     if request.method == 'POST' and form.validate_on_submit():
         if User.query.filter_by(username=form.username.data).first() is None and  User.query.filter_by(email=form.email.data).first() is None:
-            user = User(username=form.username.data, email=form.email.data, password_hash=generate_password_hash(form.password.data))
+            user = User(username=form.username.data, email=form.email.data, password_hash=generate_password_hash(form.password.data), )
             db.session.add(user)
             db.session.commit()
 
