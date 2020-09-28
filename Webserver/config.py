@@ -9,4 +9,5 @@ class Config(object):
         self.SQLALCHEMY_TRACK_MODIFICATIONS = False
         self.ALLOWED_EXTENSIONS = ['jpg', 'png', 'jpeg', 'nef', 'cr2']
         self.UPLOAD_FOLDER = r'C:\Users\Tjorven\Desktop\Programmieren\P5\P5_Webdesign\Webserver\static\res\_tmp'
-    
+        self.SECURITY_QUESTIONS =  [(0, 'Wie hieß dein erstes Haustier?'),(1, 'Straße, in der Sie als Kind gewohnt haben?'), (2, 'Bester Freund in Ihrer Kindheit?'), (3, 'Vorname Ihres Großvaters?')]
+        

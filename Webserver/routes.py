@@ -51,10 +51,10 @@ mail = Email(
 ### Flask Code-Start ###
 @app.before_first_request
 def setup():
-    
-    for img in session.get('imgs'):
-        if img and os.path.exists(img):     
-           os.remove(img)
+    if session.get('imgs'):
+        for img in session.get('imgs'):
+            if img and os.path.exists(img):     
+                os.remove(img)
 
     session['standard_css'] = url_for('static', filename='css/homepage.css')
     session['img_id'] = 0
@@ -177,7 +177,13 @@ def register():
     flash_errors(form)
     if request.method == 'POST' and form.validate_on_submit():
         if User.query.filter_by(username=form.username.data).first() is None and  User.query.filter_by(email=form.email.data).first() is None:
-            user = User(username=form.username.data, email=form.email.data, password_hash=generate_password_hash(form.password.data), )
+            user = User(
+                username=form.username.data,
+                email=form.email.data, 
+                password_hash=generate_password_hash(form.password.data),
+                security_question = form.security_question.data,
+                hashed_security_answer = generate_password_hash(form.security_answer.data.lower())
+                )
             db.session.add(user)
             db.session.commit()
 

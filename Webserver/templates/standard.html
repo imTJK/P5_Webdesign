@@ -1,15 +1,6 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 <!DOCTYPE html>
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <ul class="flashes">
-        {% for message in messages %}
-            <li>{{message}}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
 <html lang='ger'>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
@@ -49,11 +40,23 @@
                             {% endif %}
                         </li>
                     </ul>
+                    
                 </div>
             </div>
         </header>
 
         <div class="main">
+            <div class="flashes">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class="flashes">
+                    {% for message in messages %}
+                        <li>{{message}}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+                {% endwith %}
+            </div>
             <div class="container">
                 {% block content %}{% endblock %}
             </div>
