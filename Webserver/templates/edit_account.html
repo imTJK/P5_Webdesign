@@ -1,0 +1,31 @@
+{% extends 'standard.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block css %}
+    <link href="{{url_for('static', filename='css/edit_account.css')}}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Account-Details</h1>
+    <div class="form-container" style="margin: 5px;">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div id="username">
+            {{ form.username(placeholder=current_user.username) }}
+            </div>
+            <div id ="password">
+            {{ form.password(placeholder="Passwort") }}
+            {{ form.confirm(placeholder="Passwort bestaetigen") }}
+            </div>
+            <div id="submit" style="color:black">
+            {{ form.submit }}
+            {{ form.confirm_submit }}
+            </div>
+        </form>
+    </div>
+    {% if current_user.has_2fa == False%}
+    <a href="{{url_for('two_factor_auth', user_id = user_id) }}">2-Faktor Authentifikation aktivieren</a>
+    {% endif %}
+</div>
+{% endblock %}

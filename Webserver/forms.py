@@ -9,6 +9,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, EqualTo, InputRequired, Length, Email
 from werkzeug.security import generate_password_hash
 from wtforms.fields.core import SelectField
+from wtforms.widgets.core import TextArea
 
 
 SECURITY_QUESTIONS =  [(0, 'Wie hieß dein erstes Haustier?'),(1, 'Straße, in der Sie als Kind gewohnt haben?'), (2, 'Bester Freund in Ihrer Kindheit?'), (3, 'Vorname Ihres Großvaters?')]
@@ -20,9 +21,21 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Eingeloggt bleiben')
     submit = SubmitField('Einloggen')
 
-#email-confirmation Form (used for password recovery)
+#for 2fa
+class TokenForm(FlaskForm):
+    token = StringField('Token', validators=[InputRequired(), Length(6, 6)], render_kw={"placeholder": "Ihr TOTP-Token"})
+    submit = SubmitField('Bestätigen')
+
+#email-confirmation Form 
+class ConfirmForm(FlaskForm):
+    email = StringField('Email', validators=[InputRequired(), Email(check_deliverability=True)])
+    submit = SubmitField('Bestätigen')
+
+#Password-Recovery Form
 class RecoveryForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email(check_deliverability=True)])
+    security_question = SelectField(u'Bitte wählen sie ihre Sicherheitsfrage aus', choices = SECURITY_QUESTIONS, validators = [InputRequired()])
+    security_answer = StringField('Ihre Antwort', validators=[InputRequired()])
     submit = SubmitField('Bestätigen')
 
 #Password-reset Form 
@@ -65,7 +78,6 @@ class EntryEditForm(EntryBody, EntryImages):
     submit = SubmitField('Änderungen speichern')
 
 class UserEditForm(FlaskForm):
-    email = StringField('Email', validators=[Email(check_deliverability=True)])
     username = StringField('Benutzername', validators=[Length(min=5, max=255)])
     
     #current Password, not changed
@@ -73,12 +85,19 @@ class UserEditForm(FlaskForm):
     confirm = PasswordField('Passwort wiederholen')
 
     submit = SubmitField('Speichern')
-    confirm_submit = BooleanField('Bist du dir sicher?')
+    confirm_submit = BooleanField('Bist du dir sicher?', validators=[InputRequired()])
 
 #redirect-Form for edit-Pages
 class EditForm(FlaskForm):
     submit = SubmitField('Bearbeiten')
 
+class SubmitForm(FlaskForm):
+    confirm = BooleanField('Ich bin mir bewusst das bei bestätigen der Einrichtung bei jedem Login ein Code abgefragt wird', validators=[InputRequired()])
+    submit = SubmitField('Bestätigen')
+
 class SearchForm(FlaskForm):    
-    term = StringField('Wonach suchen sie?', validators=[InputRequired(), Length(max=100)]) #identical validators to Entry-Title 
-    submit = SubmitField('Suchen')
+    term = StringField(label='', validators=[InputRequired(), Length(max=100)], render_kw={"placeholder": "Was suchen sie?"}) #identical validators to Entry-Title 
+
+class MessageForm(FlaskForm):
+    message = StringField('Message...', validators=[InputRequired(), Length(min=20)], widget=TextArea(), render_kw={"placeholder": "Nachricht..."})
+    submit = SubmitField()

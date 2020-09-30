@@ -17,7 +17,7 @@ import io
 def random_string(length):
     s = ''
     for x in range (0,length):
-        abc = list('abcdefghijklmnopqrstuvwxyz')
+        abc = list('aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789')
         s += abc[random.randint(0, len(abc) - 1)]
     return s
 
@@ -26,7 +26,7 @@ def bin_to_img(bin):
     img.show()
 
 
-for i in range(20, 120):
+for i in range(1, 101):
     filetypes = Filetypes(
         id = i,
         ft_1 = 'jpg' 

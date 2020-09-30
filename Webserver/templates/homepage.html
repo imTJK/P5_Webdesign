@@ -1,22 +1,18 @@
 {% extends 'standard.html' %}
 {% block js %}
     <script>
-    message = document.getElementsByClassName('ul.flashes')
-
-    setTimeout(function(){
-        $('ul.flashes').fadeOut();}, 5000);
+    document.getElementsByClassName("flashes").style.visibility = "hidden"; 
     </script>
 {% endblock %}
 
 
 {% block content %}
-<div class="main">
+<div class="container">
     <h1>Placeholder Headline</h1>
 
     <div id="text_body">
         <h2>{{current_user.username}}, Hello</h2>
         <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam</p>
     </div>
-    
 </div>
 {% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'standard.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block css %}
+    <link href="{{url_for('static', filename='css/authenticate.css')}}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+    <h1>2-Faktor Authentisierung</h1>
+    <div class="form_container">
+        <form method="post">
+            <div id="textbox">
+            {{ form.hidden_tag() }}
+            {{ form.token }}
+            </div>
+            <br>
+            <div id="button">
+            {{ form.submit }}
+            </div>
+        </form>
+    </div>
+    </div>
+{% endblock %}

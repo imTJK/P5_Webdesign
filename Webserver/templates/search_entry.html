@@ -1,23 +1,35 @@
 {% extends 'standard.html' %}
 {% import "bootstrap/wtf.html" as wtf %}
 
+{% block css %}
+<link href="{{ url_for('static', filename='css/search_entry.css')}}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-    <strong><h1>Test-Site</h1></strong>
+    <script>
+    setTimeout(function(){
+        if ( !localStorage["reloaded"] ){
+            localStorage["reloaded"] = true
+            localStorage["rl_count"] == 1
+            location.reload()
+        }
+    }, 250)
+    </script>
+    <strong style="text-align: center;"><h1>Test-Site</h1></strong>
+    <div class="wrapper" id="entries">
     {% for entry in entries %}
     {% if (amount > 0)%}
-    <meta id='img-data' data="{{entries[entry].imgs[0]}}">
     
-    <div class="wrapper">
-        <a href="{{url_for('show_entry', entry_id=entries[entry].id)}}">
-        <div class="container">
+    <div class="container">
+            <a href="{{url_for('show_entry', entry_id=entries[entry].id)}}">
             <div class="entry">
                 <img id="entry_image_big" src="{{ url_for('show_image', entry_id=entries[entry]['id'], image_id=0) }}", alt="Angebots-Bild">
-                <h1>{{entries[entry].title}}</h1>
-                <p>{{entries[entry].description}}</p>
+                <p id="entry_title">{{entries[entry].title}}</p>
+                <p id="entry_description">{{entries[entry].description}}</p>
             </div>
-        </div>
-        </a>
-    </div>
+            </a>
+    </div>  
     {% endif %}
     {% endfor %}
+    </div>
 {% endblock %}

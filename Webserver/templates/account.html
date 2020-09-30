@@ -1,0 +1,37 @@
+{% extends 'standard.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block css %}
+    <link href="{{ url_for('static', filename='css/account.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper">
+        <div class="container">
+        <h1>Hallo {{current_user.username}}</h1>
+        </div>
+        <div class="container">
+            <div id="entries">
+                <p>Deine Einträge:</p>
+                {% for entry in entries %}
+                {% if entry %}
+                <a href="{{url_for('show_entry', entry_id=entry.id)}}">
+                    <div class="entry" style="border: solid black 1px">
+                        <img id="entry_image_big" src="{{ url_for('show_image', entry_id=entry.id, image_id=0) }}", alt="Angebots-Bild" style="max-width: 100px; max-height: 100px;">
+                        <p id="entry_title">{{entry.title}}</p>
+                        <p id="entry_description">{{entry.description}}</p>
+                    </div>
+                </a>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <hr>
+            <div class="form_container">
+                <form  method="POST">
+                {{edit_form.hidden_tag()}}
+                {{edit_form.submit}}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

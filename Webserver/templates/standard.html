@@ -3,13 +3,11 @@
 <!DOCTYPE html>
 <html lang='ger'>
     <head>
+        {% block css %}
+        {% endblock %}
         <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-        
-        {% if css_link %}
-        <link href="{{css_link}}" rel='stylesheet'>
-        {% else %}
         <link href="{{url_for('static', filename='css/homepage.css')}}" rel='stylesheet'>
-        {% endif %}
+
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -18,7 +16,7 @@
         {% else %}
         <title>Home - P5</title>
         {% endif %}
-
+   
         {% block jscript %}
         {% endblock %}
     </head>
@@ -27,15 +25,26 @@
         <header>
             <div class="wrapper">
                 <div class="container-fluid" id="navbar">
+                    <script>
+                        $('.control-label').remove()
+                    </script>
                     <ul class="nav justify-content-center">
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('homepage') }}"><img src="{{url_for('static', filename='res/imgs/icon.png')}}"  alt="Icon" width="50em" height="50em"></a></li>
-                        <li class="nav-item">{{ wtf.quick_form(search_form) }}</li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('homepage') }}"><img src="{{url_for('static', filename='res/imgs/icon.png')}}"  alt="Icon"></a></li>
+                        <li class="nav-item"> 
+                            <div id="search_form">
+                                <form method="post">
+                                {{ search_form.hidden_tag() }}
+                                {{ search_form.term }}
+                                </form>
+                            </div>
+                        </li>
                         <li class="nav-item"><a class="nav-link" href="{{ url_for('new_entry') }}">Anbieten</a></li>
                         <li class="nav-item">
                             {% if current_user.is_anonymous %}
                             <a class="nav-link" href="{{ url_for('login') }}">Login</a>
                             <a class="nav-link" href="{{ url_for('register') }}">Registrieren</a>
                             {% else %}
+                            <a class="nav_link" href="{{ url_for('view_account', user_id = current_user.id) }}">Profil</a>
                             <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
                             {% endif %}
                         </li>
@@ -44,11 +53,23 @@
                 </div>
             </div>
         </header>
-
         <div class="main">
+            <script>
+                if($('.flashes') == null){
+                    document.getElementsByClassName('main').style.padding = '0 0 0 0 ' 
+                }
+            </script>
             <div class="flashes">
+                <script>
+                    $('.flashes').delay(3500).fadeTo(1500, 0).fadeOut()
+                    setTimeout(function(){
+                        $('.flashes').remove();
+                        document.getElementsByClassName('main').style.padding = '0 0 0 0' 
+                    }, 5000)
+                    
+                </script>
                 {% with messages = get_flashed_messages() %}
-                {% if messages %}
+                {% if messages and (messages|length > 0) %}
                     <ul class="flashes">
                     {% for message in messages %}
                         <li>{{message}}</li>
@@ -57,15 +78,19 @@
                 {% endif %}
                 {% endwith %}
             </div>
-            <div class="container">
-                {% block content %}{% endblock %}
+            <div class="content">
+            {% block content %}{% endblock %}
             </div>
         </div>
-
-        <div class="container">
+        <hr>
+        <div class="container" style="height: fit-content;">
             <div id="impressum">
-                <!--- Impressum kommt hier rein, sobald die Details ausgearbeitet sind-->
+                <div id="impressum_head" style=" text-align: center;">
+                    <strong><h3>Impressum etc.</h3></strong>
+                </div>
+                <div id="impressum_body">
+                    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+                </div>
             </div>
-        </div>
     </body>
 </html>

@@ -1,0 +1,34 @@
+.form_container{
+    align-items: center;
+}
+::-webkit-input-placeholder {
+    text-align: center;
+ }
+ 
+ :-moz-placeholder { /* Firefox 18- */
+    text-align: center;  
+ }
+ 
+ ::-moz-placeholder {  /* Firefox 19+ */
+    text-align: center;  
+ }
+ 
+ :-ms-input-placeholder {  
+    text-align: center; 
+ }
+.main{
+    text-align: center;
+}
+
+#textbox input{
+    font-size: 3vh;
+    text-align: left;
+    width: 30%
+}
+
+#button input{
+    width: fit-content;
+    height: fit-content;
+    margin-bottom: 2vh;
+    font-size: 4vh;
+}

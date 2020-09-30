@@ -1,28 +1,85 @@
 {% extends 'standard.html' %}
 {% import "bootstrap/wtf.html" as wtf %}
 
+
+{% block css %}
+    <link href="{{url_for('static', filename='css/show_entry.css')}}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-{% if entry %}
-<div class="wrapper">
-    <div class="container", id="entry_container">
-        <div class="container", id="images_container">
-            <div class="main_image">
-                <img src="{{ url_for('show_image', entry_id=entry.id, image_id=0) }}" alt="img_1">
-            </div>
-            <div class="secondary_images">
-                {% for i in range(1, images|length) %}
-                {% if images[i]  %}
-                <img src="{{ url_for('show_image', entry_id=entry.id, image_id=i) }}" alt="img_2">
-                {% endif %}
-                {% endfor %}
-            </div>
+    <div class="entry_container">
+        {% if (images|length != 0) %}
+        <script>
+            function openForm() {
+                document.getElementById("myForm").style.display = "block";
+            }
+
+            function closeForm() {
+                document.getElementById("myForm").style.display = "none";
+            }
+
+            function openTab(tabName) {
+                document.getElementById(tabName).style.display = "block";
+            }
+        </script>
+        {% endif %}
+      
+        <div class = "uberschrift">
+            <h1>{{ entry.title }}</h1>
         </div>
-        <div class="container", id="entry_text_container">
-            <strong><h1 id="title">{{ entry.title }}</h1></strong><br>
-            <p id="description">{{ entry.description }}</p>
-            <a id="datetime">{{ entry.created_at }}</a>
+       
+    
+
+        <div class = "row">
+            <div class = "bilder1">
+                {% if (images|length > 1) %}
+                <div class="box" onclick="openTab('b1');">
+                    <img src="{{ url_for('show_image', entry_id=entry.id, image_id=0) }}" alt="img_1" width= 90%; height = auto; alt="kapa">
+                    <p>Auf das Bild klicken um weitere anzuzeigen</p>
+                </div>
+                {% else %}
+                <div class="box">
+                    <img src="{{ url_for('show_image', entry_id=entry.id, image_id=0) }}" alt="img_1" width= 90%; height = auto; alt="kapa" style="margin-left: 4vw; float: left;">
+                </div>
+                {% endif %}
+                {% if images|length > 1 %}
+                <div id="b1" class="containerTab" style="display:none;">
+                    <span onclick="this.parentElement.style.display='none'" class="closebtn">&times;</span>
+                    <br>
+                    {% for i in range(1, images|length) %}
+                    {% if images[i] %}
+                    <img src="{{ url_for('show_image', entry_id=entry.id, image_id=i) }}" width= 33%; height = auto; alt="img_2">
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <span class="beschreibung_s">
+                <div class = "beschreibung">
+                    <p>{{ entry.description }}</p>
+                </div>
+            </span>
+            {% if current_user.id == entry.created_by_id %}
+            <div id="entry_button">
+                <form method='POST'>
+                    {{form.hidden_tag()}}
+                    {{form.submit}}
+                </form>
+            </div>
+            {% endif %}
         </div>
     </div>
-</div>
-{% endif %}
+
+    {% if current_user.is_authenticated and current_user.id != entry.created_by_id%}
+    <button class="open-button" onclick="openForm()">Nachricht an User</button>
+    <div class="chat-popup" id="myForm">
+        <form method="post" class="form-container">
+            <p>Nachricht an Benutzer Schicken</p>            
+            {{msg_form.hidden_tag()}}
+            {{msg_form.message}}
+            {{msg_form.submit}}
+            <button type="button" class="btn cancel" onclick="closeForm()">Schließen</button>
+        </form>
+    </div>
+    {% endif %}
 {% endblock %}

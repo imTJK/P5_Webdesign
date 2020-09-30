@@ -6,7 +6,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 import zlib
 
+
 from Webserver import db
+import base64
+import onetimepass
 
 def NullColumn(*args,**kwargs):
     kwargs["nullable"] = kwargs.get("nullable",True)
@@ -20,7 +23,7 @@ class Entry(db.Model):
     description = db.Column(db.String(240))
     imgs_id = db.Column(db.Integer, db.ForeignKey('imgs.id'))
     created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    created_at = db.Column(db.DateTime, index=True, server_default=str(datetime.utcnow))
+    created_at = db.Column(db.DateTime, index=True, default=str(datetime.utcnow))
 
     def __repr__(self):
         return '<Entry title {}>'.format(self.title)
@@ -62,24 +65,52 @@ class Filetypes(db.Model):
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
+
+    otp_secret = db.Column(db.String(16))
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        if self.otp_secret is None:
+            # generate a random secret
+            self.otp_secret = base64.b32encode(os.urandom(8)).decode('utf-8')
+    
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), index=True, unique=True)
     email = db.Column(db.String(255), index=True, unique=True)
     password_hash = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, server_default=str(datetime.utcnow))
     is_active = db.Column(db.Boolean, default=False, nullable=False)
+    has_2fa = db.Column(db.Boolean, default=False, nullable=False)
     user_entries = db.relationship('Entry', backref='author', lazy='dynamic', foreign_keys=[Entry.id], primaryjoin='Entry.id == User.id')
     security_question = db.Column(db.Integer, nullable = False)
     hashed_security_answer = db.Column(db.String(255), nullable = False)
+    reset_link = db.Column(db.String(150), nullable=True, default = None)
+    confirmation_link = db.Column(db.String(150), nullable=True, default = None)
+
+    def get_totp_uri(self):
+        return 'otpauth://totp/P5-Leihwas:{0}?secret={1}&issuer=P5-Leihwas' \
+            .format(self.username, self.otp_secret)
+    
+    def verify_totp(self, token):
+        return onetimepass.valid_totp(token, self.otp_secret)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
     
     def check_password(self, password):
+        print(check_password_hash(self.password_hash, password))
         return check_password_hash(self.password_hash, password)
+
+    def set_2fa(self):
+        self.has_2fa = True
+    
+    def remove_2fa(self):
+        self.has_2fa = True
 
     def set_active(self):
         self.is_active = True
     
+    def set_inactive(self):
+        self.is_active = True
+
     def __repr__(self):
         return '<User {}>'.format(self.username)

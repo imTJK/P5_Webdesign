@@ -1,0 +1,33 @@
+{% extends 'standard.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block css %}
+    <link href="{{url_for('static', filename='css/edit_entry.css')}}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Eintrag bearbeiten</h1>
+    <div class="form-container" style="margin: 5px;">
+        <form method="POST">
+                {{ form.hidden_tag() }}
+            <div id="title">
+                {{ form.title(placeholder=entry.title) }}
+            </div>
+            <div id ="description">
+                {{ form.description(placeholder=entry.description) }}
+            </div>
+            <div id = "images">
+                {{form.img_1}}
+                {{form.img_2}}
+                {{form.img_3}}
+                {{form.img_4}}
+            </div>
+            <div id="submit" style="color:black">
+                {{ form.submit }}
+                {{ form.confirm_submit }}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
