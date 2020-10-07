@@ -3,7 +3,7 @@ sys.path.append(os.path.dirname(__file__))
 
 ### local imports ###
 from Webserver import app, login_manager, db
-from Webserver.forms import ConfirmForm, EditForm, EntryEditForm, EntryForm, LoginForm, MessageForm, PasswordForm, RecoveryForm, RegistrationForm, SearchForm, SubmitForm, TokenForm, UserEditForm
+from Webserver.forms import ConfirmForm, DeletionForm, EditForm, EntryEditForm, EntryForm, LoginForm, MessageForm, PasswordForm, RecoveryForm, RegistrationForm, SearchForm, SubmitForm, TokenForm, TwoFactorDeletionForm, UserEditForm
 from Webserver.mailserver import Email
 from Webserver.models import Entry, Filetypes, Images, User
 from Webserver.templates.email_body import EmailBody
@@ -177,6 +177,7 @@ def confirm_login():
     form = TokenForm()
     if request.method == 'POST' and form.validate_on_submit() and user.verify_totp(form.token.data):
         login_user(user, remember=remember_me, duration=timedelta(days=10))
+        return redirect(url_for('view_account', user_id = request.args['user_id']))
 
     return render_template('confirm_login.html', search_form=search_form, form = form)
 
@@ -428,7 +429,7 @@ def search_entry(search_term, amount, site):
     
     entries_list = Entry.query.filter(Entry.title.contains(search_term.lower())).all()
     
-    entries = {1 if site == 0 else site*amount : {
+    entries = {site*amount : {
                 'id' : None,
                 'title' : None,
                 'description' : None,
@@ -439,7 +440,6 @@ def search_entry(search_term, amount, site):
 
 
     for i in range(site * amount, site * amount + amount):
-        
         if i < len(entries_list) and entries_list[i]:
             for image in Images.query.filter_by(id = entries_list[i].imgs_id).all():
                 for img in image.get_images():
@@ -458,7 +458,7 @@ def search_entry(search_term, amount, site):
             filetypes = []
         else:
             break
-    if not entries[1 if site == 0 else site * amount]['id']:
+    if not entries[site * amount]['id']:
         return render_template('no_results.html', css_link = session['standard_css'], search_form = search_form)
     
     return render_template('search_entry.html', css_link = session['standard_css'], entries = entries, amount=amount, search_form=search_form)
@@ -516,9 +516,40 @@ def edit_entry(entry_id):
             flash('Eintrag wurde erfolgreich bearbeitet')
             return redirect(url_for('show_entry', entry_id = entry_id))
         
-        return render_template('edit_entry.html', entry = entry, search_form=SearchForm(), form=form, user_id = entry.created_by_id)
+        return render_template('edit_entry.html', entry = entry, search_form=SearchForm(), form=form, user_id = entry.created_by_id, entry_id = entry_id)
     return redirect(url_for('homepage'))
 
+
+@app.route('/entry/<int:entry_id>/delete', methods=['POST', 'GET'])
+@login_required
+def delete_entry(entry_id):
+    search_form = SearchForm()
+    if request.method == 'POST' and search_form.validate_on_submit():
+        return redirect(search_for(search_form))
+
+    entry = Entry.query.filter_by(id=entry_id).first()
+    if entry is None:
+        return redirect(url_for('homepage'))
+    
+    if current_user.id is not entry.created_by_id:
+        return redirect(url_for('homepage')) 
+    
+    form = DeletionForm()
+    if current_user.has_2fa:
+        form = TwoFactorDeletionForm()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        db.session.delete(entry)
+        db.session.commit()    
+        db.session.delete(Images.query.filter_by(id = entry.imgs_id).first())
+        db.session.commit()
+        db.session.delete(Filetypes.query.filter_by(id = entry.imgs_id).first())
+        db.session.commit()
+        
+        flash('Eintrag erfolgreich gelöscht')
+        return redirect(url_for('homepage'))
+
+    return render_template('delete_entry.html', form = form, entry = entry, search_form = search_form)            
 
             
 @app.route('/user/<int:user_id>', methods=['POST', 'GET'])
@@ -607,10 +638,54 @@ def two_factor_auth(user_id):
         'Expires': '0'}
 
 
+@app.route('/user/<int:user_id>/delete', methods=['POST', 'GET'])
+@login_required
+def delete_user(user_id):
+    search_form = SearchForm()
+    if request.method == 'POST' and search_form.validate_on_submit():
+        return redirect(search_for(search_form))
+
+    if current_user.id is not user_id:
+        return redirect(url_for('homepage')) 
+    
+    user = User.query.filter_by(id=user_id).first()
+
+    if user is None:
+        return redirect(url_for('homepage'))
+        
+    def deletion():
+        for entry in Entry.query.filter_by(created_by_id = user.id).all():
+            db.session.delete(entry)
+            db.session.commit()
+            for img in Images.query.filter_by(id = entry.imgs_id).all():
+                db.session.delete(img)
+                db.session.commit()
+                for filetype in Filetypes.query.filter_by(id = img.filetypes_id).all():
+                    db.session.delete(filetype)
+                    db.session.commit()
+            
+        logout_user()
+        db.session.delete(user)
+        db.session.commit()        
+        flash('User erfolgreich gelöscht')
+        return redirect(url_for('homepage'))
+   
+    form = DeletionForm()   
+    if user.has_2fa:
+        form = TwoFactorDeletionForm()
+
+      
+    if request.method == 'POST' and form.validate_on_submit():    
+        deletion()             
+
+    return render_template('delete_user.html', form = form, user = user, search_form = search_form)            
+
+
 @app.route('/image/<int:entry_id>/<int:image_id>', methods=['GET'])
 def show_image(entry_id, image_id):
     with app.test_request_context():
-        images = Images.query.filter_by(id = entry_id).first()
+        entry = Entry.query.filter_by(id = entry_id).first()
+        images = Images.query.filter_by(id = entry.imgs_id).first()
         print(entry_id, images)
         img = images.get_images()[image_id]
         filetype = 'JPEG' if images.get_filetypes()[image_id] == "jpg" else images.get_filetypes()[image_id].upper()
@@ -640,6 +715,7 @@ def qrcode(user_id):
         abort(404)
 
     # render qrcode for FreeTOTP
+    print(user.get_totp_uri(), user.otp_secret)
     url = pyqrcode.create(user.get_totp_uri())
     stream = io.BytesIO()
     url.svg(stream, scale=5)

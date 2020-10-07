@@ -35,7 +35,7 @@
                 {% if (images|length > 1) %}
                 <div class="box" onclick="openTab('b1');">
                     <img src="{{ url_for('show_image', entry_id=entry.id, image_id=0) }}" alt="img_1" width= 90%; height = auto; alt="kapa">
-                    <p>Auf das Bild klicken um weitere anzuzeigen</p>
+                    <p style="color: black;">Auf das Bild klicken um weitere anzuzeigen</p>
                 </div>
                 {% else %}
                 <div class="box">

@@ -6,28 +6,35 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Eintrag bearbeiten</h1>
-    <div class="form-container" style="margin: 5px;">
-        <form method="POST">
-                {{ form.hidden_tag() }}
-            <div id="title">
-                {{ form.title(placeholder=entry.title) }}
-            </div>
-            <div id ="description">
-                {{ form.description(placeholder=entry.description) }}
-            </div>
-            <div id = "images">
-                {{form.img_1}}
-                {{form.img_2}}
-                {{form.img_3}}
-                {{form.img_4}}
-            </div>
-            <div id="submit" style="color:black">
-                {{ form.submit }}
-                {{ form.confirm_submit }}
-            </div>
-        </form>
+<div class="wrapper">
+    <div class="uberschrift">
+        <p style = "font-size: 50px">Eintrag Bearbeiten</p>
+    </div>
+    <div class="container">
+        <div class="form-container" style="margin: 5px;">
+            <form method="POST">
+                    {{ form.hidden_tag() }}
+                <div id="title">
+                    {{ form.title(placeholder=entry.title) }}
+                </div>
+                <br>
+                <div id ="description">
+                    {{ form.description(placeholder=entry.description) }}
+                </div>
+                <br><br>
+                <div id = "images">
+                    {{form.img_1}}<br>
+                    {{form.img_2}}<br>
+                    {{form.img_3}}<br>
+                    {{form.img_4}}<br>
+                </div>
+                <br>
+                <div id="submit" style="color:black;">
+                    {{ form.submit }}
+                </div>
+            </form>
+        </div>
+        <a href="{{ url_for('delete_entry', entry_id = entry_id) }}" style="color: red; font-size: 2.5vh;">Eintrag löschen</a>
     </div>
 </div>
 {% endblock %}

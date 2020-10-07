@@ -1,24 +1,32 @@
 <!DOCTYPE html>
 <html lang="de">
     <head>
+        <link href="{{url_for('static', filename='css/two_factor.css')}}" rel='stylesheet'>
         <title>2FA - P5</title>
     </head>
     <body>
         <div class="wrapper">
+            <div class="uberschrift">
+                <h1>2-Faktor Identifikation</h1>
+            </div>
+                
             <div class="container">
-                <h1>Two Factor Authentication Setup</h1>
-                <p>You are almost done! Please start FreeOTP on your smartphone and scan the following QR Code with it:</p>
-                <div class="img" style="align-items: center;">
-                    <p><img id="qrcode" src="{{ url_for('qrcode', user_id = user_id) }}", alt = None></p>
-                </div>
-                <div class="form_container">
-                    <form method="post">
+                <p style="font-size:3vh;">
+                Du bist schon fast Fertig!!! <br>
+                Scanne bitte diesen QR-Code mit deiner Google authenticator App.
+                
+                <br><br>
+        
+                <img id="qrcode" src="{{ url_for('qrcode', user_id = user_id) }}", alt = None>
+                </p>
+                
+                <form method="post" style="padding: auto;">
+                    <p>
                     {{submit_form.hidden_tag()}}
-                    {{submit_form.confirm}}
-                    {{submit_form.confirm.label}}
                     {{submit_form.submit}}
-                    </form>
-                </div>
+                    </p>
+                </form>
+                <p>Als letzten Schritt musst du nur noch auf Bestätigen drücken und dann bist du Fertig :).</p>
             </div>
         </div>
     </body>

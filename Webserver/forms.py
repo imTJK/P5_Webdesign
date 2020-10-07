@@ -85,14 +85,12 @@ class UserEditForm(FlaskForm):
     confirm = PasswordField('Passwort wiederholen')
 
     submit = SubmitField('Speichern')
-    confirm_submit = BooleanField('Bist du dir sicher?', validators=[InputRequired()])
 
 #redirect-Form for edit-Pages
 class EditForm(FlaskForm):
     submit = SubmitField('Bearbeiten')
 
 class SubmitForm(FlaskForm):
-    confirm = BooleanField('Ich bin mir bewusst das bei bestätigen der Einrichtung bei jedem Login ein Code abgefragt wird', validators=[InputRequired()])
     submit = SubmitField('Bestätigen')
 
 class SearchForm(FlaskForm):    
@@ -101,3 +99,12 @@ class SearchForm(FlaskForm):
 class MessageForm(FlaskForm):
     message = StringField('Message...', validators=[InputRequired(), Length(min=20)], widget=TextArea(), render_kw={"placeholder": "Nachricht..."})
     submit = SubmitField()
+
+class DeletionForm(FlaskForm):
+    confirm = BooleanField('Sind sie sich sicher?', validators=[InputRequired()])
+    submit = SubmitField()
+
+class TwoFactorDeletionForm(FlaskForm):
+    confirm = BooleanField('Sind sie sich sicher?', validators=[InputRequired()])
+    token = StringField('Token', validators=[InputRequired(), Length(6, 6)], render_kw={"placeholder": "Ihr TOTP-Token"})
+    submit = SubmitField('Bestätigen')

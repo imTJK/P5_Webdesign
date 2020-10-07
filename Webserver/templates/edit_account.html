@@ -6,26 +6,32 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Account-Details</h1>
-    <div class="form-container" style="margin: 5px;">
+<div class="wrapper" style="align-self: center;">
+    <div class="uberschrift">
+        <p style = "font-size: 50px"> Account details</p>
+    </div>
+    <div class="container">
         <form method="POST">
             {{ form.hidden_tag() }}
             <div id="username">
             {{ form.username(placeholder=current_user.username) }}
             </div>
+            <br>
             <div id ="password">
             {{ form.password(placeholder="Passwort") }}
             {{ form.confirm(placeholder="Passwort bestaetigen") }}
             </div>
+            <br>
             <div id="submit" style="color:black">
             {{ form.submit }}
-            {{ form.confirm_submit }}
             </div>
         </form>
+        <br>
+        {% if current_user.has_2fa == False%}
+        <a href="{{url_for('two_factor_auth', user_id = user_id) }}">2-Faktor Authentifikation aktivieren</a>
+        {% endif %}
+        <br><br>
+        <a href="{{ url_for('delete_user', user_id = user_id) }}">User löschen</a>
     </div>
-    {% if current_user.has_2fa == False%}
-    <a href="{{url_for('two_factor_auth', user_id = user_id) }}">2-Faktor Authentifikation aktivieren</a>
-    {% endif %}
 </div>
 {% endblock %}

@@ -1,0 +1,25 @@
+body{
+    background-color:#ccecf5;
+}
+.uberschrift{
+    text-align: center;
+}
+
+.container {
+    border: 2px solid #1C531B;
+    background-color: white;
+    border-radius: 5px;
+    padding: 16px;
+    margin: 16px 13% 16px 13%;
+}
+
+.container p{
+text-align: center;
+}
+
+.container p input{
+    text-align: center;
+    font-size: 2vh;
+    width: 15vw;
+    height: 3.5vh;
+}

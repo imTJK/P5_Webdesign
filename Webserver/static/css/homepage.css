@@ -57,7 +57,7 @@ body{
     position: fixed;
     width: 100%;
     overflow: hidden;
-    background-color: #69798C;
+    background-color: #394053;
 }
 
 ul.nav{
@@ -81,12 +81,17 @@ ul.nav{
 }
 
 #navbar a {
-    color: white;
+    color: #f2f2f2;
     text-align: center;
     text-decoration: none;
     float: right;
     margin-left: 0.5em;
     margin-right: 0.5em;
+}
+
+#navbar a:hover{
+    background-color: #536D79;
+    color: black;
 }
 
 #search_form{

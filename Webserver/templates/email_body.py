@@ -62,7 +62,8 @@ class EmailBody(object):
                 <br>
                 {}
                 <br>
-                {}
+                Email: {}
+                <br>
                 <hr>
                 Weiterer Kontakt ist zurzeit erst per gegenseitigem E-Mailen möglich. Wir bitten um Verständnis.
                 <br>

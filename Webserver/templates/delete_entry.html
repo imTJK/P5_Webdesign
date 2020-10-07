@@ -1,0 +1,18 @@
+{% extends 'standard.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block content %}
+    <div class="container">
+        <h1>Eintrag: <strong>{{entry.title}}</strong> löschen</h1>
+        {% if token_form %}
+        <div class="form-container">
+            {{ wtf.quick_form(token_form)}}
+        </div>
+        {% else %}
+        <div class="form-container">
+            {{ wtf.quick_form(form)}}
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

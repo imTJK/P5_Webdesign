@@ -1,0 +1,30 @@
+body {
+    background-color: #CCECF5;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  span {
+  
+  }
+  
+  .container {
+    border: 2px solid #1C531B;
+    background-color: #26a64c;
+    border-radius: 5px;
+    padding: 16px;
+    margin: 16px 15% 0 15%;
+  }
+  
+  .container input{
+  margin: 5px;
+  }
+  
+  .container button{
+  margin:3px 0 10px 5px;
+  }
+  
+  .uberschrift{
+  text-align: center;
+  margin: 16px;
+  }
