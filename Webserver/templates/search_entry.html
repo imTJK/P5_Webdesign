@@ -17,20 +17,20 @@
     </script>
     <strong style="text-align: center;"><h1>Test-Site</h1></strong>
     <div class="wrapper" id="entries">
-    {% for entry in entries %}
-    {% if (amount > 0)%}
-    
-    <div class="container">
-            <a href="{{url_for('show_entry', entry_id=entries[entry].id)}}">
-            <div class="entry">
-                <img id="entry_image_big" src="{{ url_for('show_image', entry_id=entries[entry]['id'], image_id=0) }}", alt="Angebots-Bild", style="width: 125px; height: 125px;">
-                <p id="entry_title" style="font-size: 2.5vh;"><strong>{{entries[entry].title}}</strong></p>
-                <hr>
-                <p id="entry_description">{{entries[entry].description}}</p>
-            </div>
-            </a>
-    </div>  
-    {% endif %}
-    {% endfor %}
+        {% for entry in entries %}
+        {% if (amount > 0)%}
+
+        <div class="container">
+                <a href="{{url_for('show_entry', entry_id=entries[entry].id)}}">
+                <div class="entry">
+                    <img id="entry_image_big" src="{{ url_for('show_image', entry_id=entries[entry]['id'], image_id=0) }}", alt="Angebots-Bild", style="width: 125px; height: 125px;">
+                    <p id="entry_title" style="font-size: 2.5vh;"><strong>{{entries[entry].title}}</strong></p>
+                    <hr>
+                    <p id="entry_description">{{entries[entry].description}}</p>
+                </div>
+                </a>
+        </div>  
+        {% endif %}
+        {% endfor %}
     </div>
 {% endblock %}
