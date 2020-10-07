@@ -22,7 +22,7 @@ def upgrade():
     op.add_column('users', sa.Column('otp_secret', sa.String(length=10), nullable=False))
     op.add_column('users', sa.Column('hashed_security_answer', sa.String(length=255), nullable=False))
     op.add_column('users', sa.Column('is_active', mysql.TINYINT(display_width=1), server_default=sa.text('0'), autoincrement=False, nullable=False))
-    op.create_index('ix_users_created_at', 'users', ['created_at'], unique=False)
+    op.add_column('users', sa.Column('has_2fa', mysql.TINYINT(display_width=1), server_default=sa.text('0'), autoincrement=False, nullable=False))
     op.alter_column('imgs', 'img_1',
                existing_type=mysql.MEDIUMBLOB(),
                nullable=False)
